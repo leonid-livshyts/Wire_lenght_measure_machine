@@ -5,3 +5,4 @@
 shared
 **.vscode
 /Code/build/
+/Code/tests/build/
