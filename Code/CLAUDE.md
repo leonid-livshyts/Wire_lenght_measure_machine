@@ -20,13 +20,13 @@ This directory is only the firmware. The wider repo (one level up) also holds `C
 - Outputs: `build/Code.uf2` (drag-and-drop to BOOTSEL drive), `build/Code.elf`.
 - Flash over USB: `picotool load build/Code.elf -fx` (`.vscode/tasks.json` expects picotool 2.3.1; only 2.2.0-a4 is currently installed in `~/.pico-sdk/picotool/`). SWD flashing/debug uses OpenOCD with a CMSIS-DAP probe (see `.vscode/tasks.json` / `launch.json`).
 - stdio goes over USB CDC (UART stdio disabled).
-- There are no tests or linters.
+- Host unit tests for the hardware-independent logic: `Code/tests/run_tests.sh` (system `g++`, no framework). Add a new core `.cpp` to `SOURCES` in that script. No linters.
 
 New `.cpp` files must be added to `add_executable(Code ...)`, and any new SDK hardware library (e.g. `hardware_pwm`, `hardware_pio`) to `target_link_libraries`.
 
 ## Code structure
 
-- `Code.cpp` — `main()`, pin constants (`constexpr uint ..._PIN`), and global peripheral objects. Currently only a display test.
+- `Code.cpp` — `main()`, pin constants (`constexpr uint ..._PIN`), global peripheral objects, the idle screen, and menu registration. The main loop only collects input (`MenuInput`) and calls `MenuManager::process()`. The `LabelTab` menus in it are placeholders.
 - `max7219.{h,cpp}` — `Max7219` driver for an 8-digit 7-segment module on SPI0 (1 MHz, mode 0, CS toggled manually as a GPIO). Key conventions:
   - No-decode mode; the driver keeps a segment `buffer_` and rewrites digits from it. Segment bit layout is `DP A B C D E F G` (`SEG_*` constants).
   - Public positions are left-to-right (0 = leftmost), but on the module DIG0 is the rightmost digit — `writeDigit()` does the reversal. Keep that mapping in one place.
@@ -35,6 +35,13 @@ New `.cpp` files must be added to `add_executable(Code ...)`, and any new SDK ha
 - `rotary_encoder.{h,cpp}` — `RotaryEncoder` driver for KY-040 encoders, multi-instance (up to `kMaxEncoders` = 4). Rotation is decoded in a per-instance raw GPIO IRQ handler (quadrature lookup table, every edge of CLK/DT); the button is debounced by one shared 1 ms repeating timer. `getCount()` = raw quadrature steps (4 per detent, for the measuring roll), `readDelta()` = detents since last call (for UI), `wasClicked()` = one-shot press flag. Uses `gpio_add_raw_irq_handler_masked64`, so it coexists with other GPIO IRQ users — do not switch it to `gpio_set_irq_enabled_with_callback` (single global callback).
 
 - `motor.{h,cpp}` — `Motor`, PWM speed control for the pulling motor. The driver (BC547 → IRF3205) is inverting (pin high = stopped), handled by inverted PWM output polarity, so the API uses 0.0 = stopped … 1.0 = full. `start()` / `stop()` / `setMaxSpeed()` are non-blocking: a 5 ms repeating timer ramps the speed along an S-curve over `ramp_ms` (default 2.5 s). A new command always ramps from the current speed, so it never jumps. `motor.init()` must run first in `main()`, because a low pin means full speed.
+
+- Menu system (hardware-free, host-tested, so no Pico headers in these files):
+  - `click_detector.{h,cpp}` — `ClickDetector`: reports a click on release only if the press lasted ≤ 2 s (`kShortClickMaxMs`); longer presses are ignored.
+  - `menu.{h,cpp}` — `MenuTab` (one page: `onEnter` / `onTurn` / `onClick` / `update` / `onExit`, returning `TabAction::Stay | Next | CloseMenu`) and `Menu` (ordered tabs; `Next` past the last tab closes the menu; override `onOpen()` / `onClose()` for menu-wide setup and cleanup).
+  - `menu_manager.{h,cpp}` — `MenuManager`: while idle, opens the menu whose `MenuTrigger` fired; while a menu is open, only the user knob drives it and every trigger is ignored (menus never overlap); shows the idle screen (all segments lit) when the menu closes.
+  - Flow: user knob short click opens the Working menu, measuring-encoder short click opens Calibration; in both, a user-knob short click goes to the next tab.
+  - Adding a menu: subclass `MenuTab` per page (tabs draw on `display` themselves), `addTab()` them in order to a `Menu`, and `menus.addMenu(trigger, menu)` in `main()`. A new trigger source needs a `MenuTrigger` value, a `MenuInput` field, a case in `isTriggered()` (`menu_manager.cpp`), and filling that field in the main loop.
 
 Current display wiring (SPI0): SCK=GP18, MOSI/DIN=GP19, CS/LOAD=GP17.
 Encoders (KY-040, powered from 3.3 V): measuring roll CLK=GP2, DT=GP3, SW=GP4; user knob CLK=GP6, DT=GP7, SW=GP8.

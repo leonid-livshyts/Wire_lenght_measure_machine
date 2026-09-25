@@ -35,7 +35,8 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Code Code.cpp max7219.cpp rotary_encoder.cpp motor.cpp)
+add_executable(Code Code.cpp max7219.cpp rotary_encoder.cpp motor.cpp
+        click_detector.cpp menu.cpp menu_manager.cpp)
 
 pico_set_program_name(Code "Code")
 pico_set_program_version(Code "0.1")
