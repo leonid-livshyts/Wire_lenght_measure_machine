@@ -26,6 +26,7 @@ struct MenuInput {
 // Adding a menu: build a Menu from MenuTabs and bind it with addMenu().
 // A new kind of trigger needs a MenuTrigger value, a MenuInput field and a
 // case in menu_manager.cpp's isTriggered().
+// Open menus only through their trigger: a Menu::open() called directly is not seen by the manager.
 class MenuManager {
 public:
     static constexpr int kMaxMenus = 4;

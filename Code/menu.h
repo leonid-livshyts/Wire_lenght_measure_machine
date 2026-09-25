@@ -25,6 +25,7 @@ public:
 
     // Called every main-loop pass while the tab is shown, for tabs that
     // react to something other than the knob (e.g. wire length reached).
+    // Also runs on the pass that opens the menu, right after onEnter().
     virtual TabAction update(uint32_t now_ms) { (void)now_ms; return TabAction::Stay; }
 
     // The tab is about to be hidden (next tab or menu closing).
@@ -38,6 +39,7 @@ protected:
 // An ordered sequence of tabs: open -> tab 0 -> tab 1 -> ... -> close.
 // Subclass and override onOpen() / onClose() for menu-wide setup and
 // cleanup (e.g. stopping the motor when the working menu closes).
+// Menus are statics, never deleted through a Menu pointer (no heap), so the destructor is not virtual.
 class Menu {
 public:
     static constexpr int kMaxTabs = 8;

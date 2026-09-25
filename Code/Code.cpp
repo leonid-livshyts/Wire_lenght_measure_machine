@@ -89,6 +89,8 @@ int main()
         input.user_turn = userEncoder.readDelta();  // read every pass so idle turns are dropped
         input.user_click = userClicks.update(userEncoder.isPressed(), now);
         input.measure_click = measureClicks.update(measureEncoder.isPressed(), now);
+        // measureEncoder.readDelta() is deliberately not drained: the measuring roll uses getCount(),
+        // so a later readDelta() would return everything since boot.
         menus.process(input, now);
 
         sleep_ms(LOOP_PERIOD_MS);
