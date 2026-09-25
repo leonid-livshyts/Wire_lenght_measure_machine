@@ -70,7 +70,16 @@ protected:
 private:
     void apply(TabAction action);
 
+    // Calls onExit() on the shown tab. A close() from inside the hook is
+    // deferred to the caller via close_requested_, so no hook fires twice.
+    void leaveCurrent();
+
+    // Finishes closing the menu: clears current_ and fires onClose().
+    void finishClose();
+
     MenuTab *tabs_[kMaxTabs] = {};
     int tab_count_ = 0;
     int current_ = -1;
+    bool leaving_ = false;          // inside leaveCurrent(): a call chain is exiting the shown tab
+    bool close_requested_ = false;  // close() was re-entered from onExit(); finish it when leaveCurrent() returns
 };

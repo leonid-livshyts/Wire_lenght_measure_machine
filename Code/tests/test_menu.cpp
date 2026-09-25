@@ -172,6 +172,34 @@ void testEmptyMenuClosesImmediately() {
     CHECK(m.closes == 1);
 }
 
+void testCloseFromOnExitDuringNext() {
+    FakeTab a, b;
+    HookMenu m;
+    m.addTab(a);
+    m.addTab(b);
+    a.close_on_exit = &m;
+    m.open();
+    m.click();
+    CHECK(!m.isOpen());
+    CHECK(m.currentTab() == -1);
+    CHECK(a.exits == 1);
+    CHECK(b.enters == 0);
+    CHECK(m.closes == 1);
+}
+
+void testCloseFromOnExitDuringClose() {
+    FakeTab a, b;
+    HookMenu m;
+    m.addTab(a);
+    m.addTab(b);
+    a.close_on_exit = &m;
+    m.open();
+    m.close();
+    CHECK(!m.isOpen());
+    CHECK(a.exits == 1);
+    CHECK(m.closes == 1);
+}
+
 }  // namespace
 
 void runMenuTests() {
@@ -187,4 +215,6 @@ void runMenuTests() {
     testReopenStartsAtFirstTab();
     testTabLimit();
     testEmptyMenuClosesImmediately();
+    testCloseFromOnExitDuringNext();
+    testCloseFromOnExitDuringClose();
 }

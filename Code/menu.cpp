@@ -21,11 +21,26 @@ void Menu::open() {
     tabs_[current_]->onEnter();
 }
 
-void Menu::close() {
-    if (!isOpen()) return;
+void Menu::leaveCurrent() {
+    leaving_ = true;
     tabs_[current_]->onExit();
+    leaving_ = false;
+}
+
+void Menu::finishClose() {
+    close_requested_ = false;
     current_ = -1;
     onClose();
+}
+
+void Menu::close() {
+    if (!isOpen()) return;
+    if (leaving_) {  // re-entered from onExit(): the running transition closes
+        close_requested_ = true;
+        return;
+    }
+    leaveCurrent();
+    finishClose();
 }
 
 bool Menu::isOpen() const {
@@ -58,7 +73,11 @@ void Menu::apply(TabAction action) {
                 close();
                 break;
             }
-            tabs_[current_]->onExit();
+            leaveCurrent();
+            if (close_requested_) {
+                finishClose();
+                break;
+            }
             current_++;
             tabs_[current_]->onEnter();
             break;

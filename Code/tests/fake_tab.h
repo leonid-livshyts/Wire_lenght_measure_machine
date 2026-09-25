@@ -11,10 +11,14 @@ public:
     int32_t turned = 0;
     TabAction click_action = TabAction::Next;
     TabAction update_action = TabAction::Stay;
+    Menu *close_on_exit = nullptr;  // re-entrancy: close the menu from inside onExit()
 
     void onEnter() override { enters++; }
     void onTurn(int32_t detents) override { turned += detents; }
     TabAction onClick() override { clicks++; return click_action; }
     TabAction update(uint32_t) override { return update_action; }
-    void onExit() override { exits++; }
+    void onExit() override {
+        exits++;
+        if (close_on_exit != nullptr) close_on_exit->close();
+    }
 };
