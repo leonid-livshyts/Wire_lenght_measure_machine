@@ -65,7 +65,7 @@ private:
     repeating_timer_t timer_;
 
     uint8_t max_percent_ = 100;
-    bool running_ = false;  // start() was called and stop() was not
+    bool running_ = false;  // driving: start() or setSpeed(> 0) was called, and no stop since
 
     // Ramp state, shared with the timer IRQ
     volatile float speed_ = 0.0f;
