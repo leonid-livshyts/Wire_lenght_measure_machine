@@ -16,13 +16,13 @@ double slowDownDistanceMm(double speed_mm_per_s, uint32_t ramp_ms) {
     return (speed_mm_per_s + kCreepSpeedMmPerS) / 2.0 * (ramp_ms / 1000.0);
 }
 
-bool shouldSlowDown(int64_t pulled_mm, int32_t target_mm, double speed_mm_per_s, uint32_t ramp_ms) {
+bool shouldSlowDown(double pulled_mm, int32_t target_mm, double speed_mm_per_s, uint32_t ramp_ms) {
     double lead = slowDownDistanceMm(speed_mm_per_s, ramp_ms) + kCreepMinMm;
-    return (double)pulled_mm + lead >= (double)target_mm;
+    return pulled_mm + lead >= (double)target_mm;
 }
 
-bool shouldStop(int64_t pulled_mm, int32_t target_mm) {
-    return pulled_mm >= (int64_t)target_mm - kStopBeforeMm;
+bool shouldStop(double pulled_mm, int32_t target_mm) {
+    return pulled_mm >= (double)target_mm - kStopBeforeMm;
 }
 
 float estimateCreepPower(float power, double speed_mm_per_s) {
@@ -30,16 +30,16 @@ float estimateCreepPower(float power, double speed_mm_per_s) {
     return clampPower(guess, power);
 }
 
-void SpeedMeter::reset(int64_t mm, uint32_t now_ms) {
+void SpeedMeter::reset(double mm, uint32_t now_ms) {
     window_mm_ = mm;
     window_start_ms_ = now_ms;
     speed_mm_per_s_ = 0.0;
 }
 
-double SpeedMeter::update(int64_t mm, uint32_t now_ms) {
+double SpeedMeter::update(double mm, uint32_t now_ms) {
     uint32_t elapsed = now_ms - window_start_ms_;  // unsigned: correct across the wrap
     if (elapsed >= kWindowMs) {
-        speed_mm_per_s_ = (double)(mm - window_mm_) * 1000.0 / (double)elapsed;
+        speed_mm_per_s_ = (mm - window_mm_) * 1000.0 / (double)elapsed;
         window_mm_ = mm;
         window_start_ms_ = now_ms;
     }

@@ -30,6 +30,13 @@ void testShouldStop() {
     CHECK(shouldStop(1005, 1000));  // overshot
 }
 
+void testShouldStopUnroundedMm() {
+    // Control on unrounded mm: the stop fires exactly at target - kStopBeforeMm,
+    // not half a mm early as it did when the caller rounded first.
+    CHECK(!shouldStop(1000 - kStopBeforeMm - 0.1, 1000));
+    CHECK(shouldStop(1000 - kStopBeforeMm, 1000));
+}
+
 void testEstimateCreepPower() {
     CHECK(near(estimateCreepPower(1.0f, kCreepSpeedMmPerS * 5.0), 0.2));  // speed ~ power
     CHECK(near(estimateCreepPower(0.5f, kCreepSpeedMmPerS / 2.0), 0.5));  // never above the current power
@@ -65,6 +72,14 @@ void testSpeedMeterNeedsFullWindow() {
     CHECK(near(m.update(10, 1100), 100.0));  // 10 mm in 100 ms
     CHECK(near(m.update(12, 1150), 100.0));  // keeps the last value mid-window
     CHECK(near(m.update(30, 1200), 200.0));  // 20 mm in the next 100 ms
+}
+
+void testSpeedMeterFractionalMm() {
+    // Unrounded mm: a 100 ms window sees the true fractional distance, not a
+    // coarse +-1 mm reading.
+    SpeedMeter m;
+    m.reset(0.0, 0);
+    CHECK(near(m.update(2.5, 100), 25.0));
 }
 
 void testSpeedMeterResetClearsSpeed() {
@@ -119,10 +134,12 @@ void runRunLogicTests() {
     testSlowDownDistance();
     testShouldSlowDown();
     testShouldStop();
+    testShouldStopUnroundedMm();
     testEstimateCreepPower();
     testCreepControllerAdjustsEveryWindow();
     testCreepControllerClamps();
     testSpeedMeterNeedsFullWindow();
+    testSpeedMeterFractionalMm();
     testSpeedMeterResetClearsSpeed();
     testSpeedMeterWraparound();
     testStallAfterTimeout();

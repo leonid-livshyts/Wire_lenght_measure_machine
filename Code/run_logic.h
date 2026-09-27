@@ -29,11 +29,13 @@ constexpr float kCreepGainPerMmS = 0.002f;  // power change per mm/s of error, p
 double slowDownDistanceMm(double speed_mm_per_s, uint32_t ramp_ms);
 
 // True once the motor must start slowing down to still creep kCreepMinMm
-// before the target.
-bool shouldSlowDown(int64_t pulled_mm, int32_t target_mm, double speed_mm_per_s, uint32_t ramp_ms);
+// before the target. pulled_mm is the unrounded pulled length.
+bool shouldSlowDown(double pulled_mm, int32_t target_mm, double speed_mm_per_s, uint32_t ramp_ms);
 
 // True once pulled_mm >= target_mm - kStopBeforeMm: stop the motor now.
-bool shouldStop(int64_t pulled_mm, int32_t target_mm);
+// pulled_mm is the unrounded pulled length, so the stop fires exactly at
+// target_mm - kStopBeforeMm instead of up to 0.5 mm early.
+bool shouldStop(double pulled_mm, int32_t target_mm);
 
 // First guess for the creep power, taking wire speed as proportional to
 // power: power * creep / speed, at most `power`, at least kCreepMinPower.
@@ -45,15 +47,16 @@ class SpeedMeter {
 public:
     static constexpr uint32_t kWindowMs = 100;
 
-    // Starts measuring from `mm`; the speed is 0 until a full window has passed.
-    void reset(int64_t mm, uint32_t now_ms);
+    // Starts measuring from `mm` (unrounded); the speed is 0 until a full
+    // window has passed.
+    void reset(double mm, uint32_t now_ms);
 
-    // Call every pass. Returns the speed of the last full window in mm/s.
-    // now_ms may wrap around.
-    double update(int64_t mm, uint32_t now_ms);
+    // Call every pass with the unrounded pulled length. Returns the speed of
+    // the last full window in mm/s. now_ms may wrap around.
+    double update(double mm, uint32_t now_ms);
 
 private:
-    int64_t window_mm_ = 0;
+    double window_mm_ = 0.0;
     uint32_t window_start_ms_ = 0;
     double speed_mm_per_s_ = 0.0;
 };
