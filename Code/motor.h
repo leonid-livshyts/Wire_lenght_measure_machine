@@ -42,8 +42,16 @@ public:
     // True while the motor turns or is still ramping; false once fully stopped.
     bool isRunning() const;
 
+    // Drives at exactly `speed` (0.0 .. 1.0, not limited by the max speed),
+    // reaching it over ramp_ms (0 = at once). 0.0 stops the motor. Used to
+    // hold a measured wire speed, e.g. creeping onto the target length.
+    void setSpeed(float speed, uint32_t ramp_ms);
+
+    // True while a ramp started by any command is still in progress.
+    bool isRamping() const;
+
 private:
-    void rampTo(float target);
+    void rampTo(float target, uint64_t ramp_us);
     void applySpeed(float speed);
     void update();
     static bool timerCallback(repeating_timer_t *t);
@@ -52,7 +60,7 @@ private:
     uint slice_;
     uint channel_;
     uint16_t top_ = 0;
-    uint32_t ramp_us_;
+    uint32_t ramp_us_;  // ramp time of start() / stop() / setMaxSpeed()
     uint32_t pwm_hz_;
     repeating_timer_t timer_;
 
@@ -64,5 +72,6 @@ private:
     float ramp_from_ = 0.0f;
     float ramp_to_ = 0.0f;
     uint64_t ramp_start_us_ = 0;
+    uint64_t ramp_len_us_ = 0;  // duration of the current ramp
     volatile bool ramping_ = false;
 };

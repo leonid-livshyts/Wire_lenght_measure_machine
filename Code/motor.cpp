@@ -56,17 +56,17 @@ void Motor::init() {
 
 void Motor::start() {
     running_ = true;
-    rampTo(max_percent_ / 100.0f);
+    rampTo(max_percent_ / 100.0f, ramp_us_);
 }
 
 void Motor::stop() {
     running_ = false;
-    rampTo(0.0f);
+    rampTo(0.0f, ramp_us_);
 }
 
 void Motor::setMaxSpeed(uint8_t percent) {
     max_percent_ = percent > 100 ? 100 : percent;
-    if (running_) rampTo(max_percent_ / 100.0f);
+    if (running_) rampTo(max_percent_ / 100.0f, ramp_us_);
 }
 
 uint8_t Motor::getMaxSpeed() const {
@@ -81,13 +81,25 @@ bool Motor::isRunning() const {
     return running_ || ramping_ || speed_ > 0.0f;
 }
 
+void Motor::setSpeed(float speed, uint32_t ramp_ms) {
+    if (speed < 0.0f) speed = 0.0f;
+    if (speed > 1.0f) speed = 1.0f;
+    running_ = speed > 0.0f;
+    rampTo(speed, (uint64_t)ramp_ms * 1000);
+}
+
+bool Motor::isRamping() const {
+    return ramping_;
+}
+
 // Starts a new ramp from wherever the motor is now, so calling stop() in the
 // middle of a start (or vice versa) does not cause a speed jump.
-void Motor::rampTo(float target) {
+void Motor::rampTo(float target, uint64_t ramp_us) {
     uint32_t irq_state = save_and_disable_interrupts();
     ramp_from_ = speed_;
     ramp_to_ = target;
     ramp_start_us_ = time_us_64();
+    ramp_len_us_ = ramp_us;
     ramping_ = true;
     restore_interrupts(irq_state);
 }
@@ -104,11 +116,11 @@ void Motor::update() {
 
     uint64_t elapsed = time_us_64() - ramp_start_us_;
     float speed;
-    if (ramp_us_ == 0 || elapsed >= ramp_us_) {
+    if (ramp_len_us_ == 0 || elapsed >= ramp_len_us_) {
         speed = ramp_to_;
         ramping_ = false;
     } else {
-        float t = (float)elapsed / (float)ramp_us_;
+        float t = (float)elapsed / (float)ramp_len_us_;
         speed = ramp_from_ + (ramp_to_ - ramp_from_) * sCurve(t);
     }
     speed_ = speed;
