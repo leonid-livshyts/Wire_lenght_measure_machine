@@ -75,7 +75,10 @@ TabAction CalMoveTab::update(uint32_t) {
 }
 
 void CalMoveTab::onExit() {
-    ctx_.motor.stop();  // harmless in hand mode
+    // Only stop the motor if it was actually driving: stop() on an
+    // already-stopped motor starts a pointless 0->0 ramp that would make
+    // isRunning() true (and so delay the save on page 4) for no reason.
+    if (ctx_.mode == CalibrationMode::Motor) ctx_.motor.stop();
     int32_t count = ctx_.measure.getCount();
     ctx_.ticks = count < 0 ? -count : count;
 }
@@ -94,14 +97,34 @@ void CalMoveTab::draw() {
 // --- Page 4: result ---
 
 void CalResultTab::onEnter() {
+    save_pending_ = false;
     double mm_per_tick = 0.0;
     if (!computeMmPerTick(ctx_.length_mm, ctx_.ticks, mm_per_tick)) {
         ctx_.display.printText("Err");  // no ticks counted: nothing to save
         return;
     }
-    ctx_.display.printNumber(ctx_.ticks);  // drawn before the flash write pauses interrupts
-    ctx_.settings.mm_per_tick = mm_per_tick;
-    if (!ctx_.save(ctx_.settings)) ctx_.display.printText("FLSH Err");
+    ctx_.display.printNumber(ctx_.ticks);
+    new_mm_per_tick_ = mm_per_tick;
+    save_pending_ = true;  // saved once the motor has stopped, see update()
+}
+
+TabAction CalResultTab::update(uint32_t) {
+    // Deferred from onEnter(): the motor left by CalMoveTab::onExit() is
+    // still ramping down, and saveSettings() turns interrupts off for the
+    // flash erase, which would freeze that braking ramp mid-stop.
+    if (save_pending_ && !ctx_.motor.isRunning()) {
+        ctx_.settings.mm_per_tick = new_mm_per_tick_;
+        if (!ctx_.save(ctx_.settings)) ctx_.display.printText("FLSH Err");
+        save_pending_ = false;
+    }
+    return TabAction::Stay;
+}
+
+TabAction CalResultTab::onClick() {
+    // Ignore the click until the save above has happened (at most ~2.5 s,
+    // the motor's ramp time), so leaving the menu can't race the flash write.
+    if (save_pending_) return TabAction::Stay;
+    return TabAction::Next;
 }
 
 // --- Menu ---
@@ -116,5 +139,7 @@ CalibrationMenu::CalibrationMenu(CalibrationContext &ctx)
 }
 
 void CalibrationMenu::onClose() {
-    ctx_.motor.stop();  // safety net, whichever way the menu closes
+    // Safety net, whichever way the menu closes; only if actually needed, so
+    // this does not start a pointless 0->0 ramp on an already-stopped motor.
+    if (ctx_.motor.isRunning()) ctx_.motor.stop();
 }

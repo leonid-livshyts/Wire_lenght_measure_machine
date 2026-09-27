@@ -82,14 +82,21 @@ private:
     int64_t shown_mm_ = -1;  // last value drawn, to redraw only on change
 };
 
-// Page 4: shows the tick count; computes and saves the new ratio.
+// Page 4: shows the tick count, then saves the new ratio once the motor
+// (left ramping down by CalMoveTab::onExit()) has actually stopped. Saving
+// disables interrupts for the flash erase, which would freeze the motor's
+// braking ramp if done immediately.
 class CalResultTab final : public MenuTab {
 public:
     explicit CalResultTab(CalibrationContext &ctx) : ctx_(ctx) {}
     void onEnter() override;
+    TabAction update(uint32_t now_ms) override;
+    TabAction onClick() override;
 
 private:
     CalibrationContext &ctx_;
+    double new_mm_per_tick_ = 0.0;  // computed in onEnter(), saved once the motor is stopped
+    bool save_pending_ = false;
 };
 
 // The calibration menu: pages 1, 2, 2.5, 3, 4 in order.
