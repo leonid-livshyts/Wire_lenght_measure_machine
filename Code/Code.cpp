@@ -26,6 +26,7 @@ constexpr uint USER_ENC_SW_PIN     = 8;
 constexpr uint MOTOR_PWM_PIN = 10;
 
 constexpr uint32_t LOOP_PERIOD_MS = 5;
+constexpr uint32_t DISPLAY_REFRESH_MS = 250;  // heals a display corrupted by a noisy SPI frame
 
 Max7219 display(spi0, DISPLAY_SCK_PIN, DISPLAY_MOSI_PIN, DISPLAY_CS_PIN);
 RotaryEncoder measureEncoder(MEASURE_ENC_CLK_PIN, MEASURE_ENC_DT_PIN, MEASURE_ENC_SW_PIN);
@@ -85,6 +86,7 @@ int main()
 
     ClickDetector userClicks;
     ClickDetector measureClicks;
+    uint32_t last_display_refresh = 0;
 
     while (true) {
         uint32_t now = to_ms_since_boot(get_absolute_time());
@@ -96,6 +98,11 @@ int main()
         // measureEncoder.readDelta() is deliberately not drained: the measuring roll uses getCount(),
         // so a later readDelta() would return everything since boot.
         menus.process(input, now);
+
+        if (now - last_display_refresh >= DISPLAY_REFRESH_MS) {
+            display.refresh();
+            last_display_refresh = now;
+        }
 
         sleep_ms(LOOP_PERIOD_MS);
     }

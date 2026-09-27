@@ -34,12 +34,20 @@ void Max7219::init(uint8_t brightness) {
     gpio_set_dir(cs_pin_, GPIO_OUT);
     gpio_put(cs_pin_, 1);
 
-    write(REG_TEST, 0);
+    test_on_ = false;
+    brightness_ = brightness > 15 ? 15 : brightness;
+    power_on_ = true;
+    for (uint8_t &segments : buffer_) segments = 0;
+    refresh();
+}
+
+void Max7219::refresh() {
+    write(REG_TEST, test_on_ ? 1 : 0);
     write(REG_DECODE_MODE, 0);          // raw segments for every digit
     write(REG_SCAN_LIMIT, kDigits - 1); // scan all 8 digits
-    setBrightness(brightness);
-    clear();
-    setPower(true);
+    write(REG_INTENSITY, brightness_);
+    for (int pos = 0; pos < kDigits; pos++) writeDigit(pos);
+    write(REG_SHUTDOWN, power_on_ ? 1 : 0);  // last: switch on with the digits already set
 }
 
 void Max7219::clear() {
@@ -50,14 +58,17 @@ void Max7219::clear() {
 }
 
 void Max7219::setBrightness(uint8_t level) {
-    write(REG_INTENSITY, level > 15 ? 15 : level);
+    brightness_ = level > 15 ? 15 : level;
+    write(REG_INTENSITY, brightness_);
 }
 
 void Max7219::setPower(bool on) {
+    power_on_ = on;
     write(REG_SHUTDOWN, on ? 1 : 0);
 }
 
 void Max7219::setTest(bool on) {
+    test_on_ = on;
     write(REG_TEST, on ? 1 : 0);
 }
 

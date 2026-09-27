@@ -46,6 +46,13 @@ public:
 
     static uint8_t charToSegments(char c);
 
+    // Rewrites every control register and digit from the driver's state.
+    // The MAX7219 cannot be read back, and at 5 V supply our 3.3 V logic is
+    // below its 3.5 V input-high level, so a noisy SPI frame can corrupt it
+    // (e.g. switch on display test: all segments lit, digits ignored).
+    // Call this regularly so such a glitch heals itself.
+    void refresh();
+
 private:
     void write(uint8_t reg, uint8_t data);
     void writeDigit(int pos);
@@ -55,4 +62,9 @@ private:
     uint mosi_pin_;
     uint cs_pin_;
     uint8_t buffer_[kDigits] = {};
+
+    // Control register state, kept for refresh()
+    uint8_t brightness_ = 8;
+    bool power_on_ = false;
+    bool test_on_ = false;
 };
