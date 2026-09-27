@@ -26,7 +26,7 @@ New `.cpp` files must be added to `add_executable(Code ...)`, and any new SDK ha
 
 ## Code structure
 
-- `Code.cpp` — `main()`, pin constants (`constexpr uint ..._PIN`), global peripheral objects, the idle screen, and menu registration. The main loop only collects input (`MenuInput`) and calls `MenuManager::process()`. The `LabelTab` menus in it are placeholders.
+- `Code.cpp` — `main()`, pin constants (`constexpr uint ..._PIN`), global peripheral objects, the idle screen, and menu registration. The main loop only collects input (`MenuInput`) and calls `MenuManager::process()`. It loads `Settings settings` from flash at boot. The Working menu's `LabelTab`s are still placeholders.
 - `max7219.{h,cpp}` — `Max7219` driver for an 8-digit 7-segment module on SPI0 (1 MHz, mode 0, CS toggled manually as a GPIO). Key conventions:
   - No-decode mode; the driver keeps a segment `buffer_` and rewrites digits from it. Segment bit layout is `DP A B C D E F G` (`SEG_*` constants).
   - Public positions are left-to-right (0 = leftmost), but on the module DIG0 is the rightmost digit — `writeDigit()` does the reversal. Keep that mapping in one place.
@@ -39,9 +39,13 @@ New `.cpp` files must be added to `add_executable(Code ...)`, and any new SDK ha
 - Menu system (hardware-free, host-tested, so no Pico headers in these files):
   - `click_detector.{h,cpp}` — `ClickDetector`: reports a click on release only if the press lasted ≤ 2 s (`kShortClickMaxMs`); longer presses are ignored.
   - `menu.{h,cpp}` — `MenuTab` (one page: `onEnter` / `onTurn` / `onClick` / `update` / `onExit`, returning `TabAction::Stay | Next | CloseMenu`) and `Menu` (ordered tabs; `Next` past the last tab closes the menu; override `onOpen()` / `onClose()` for menu-wide setup and cleanup).
+  - A tab can override `isSkipped()` to be left out of the sequence. It is asked at every transition, so it can depend on an earlier page's choice (the calibration attach page uses this).
   - `menu_manager.{h,cpp}` — `MenuManager`: while idle, opens the menu whose `MenuTrigger` fired; while a menu is open, only the user knob drives it and every trigger is ignored (menus never overlap); shows the idle screen (all segments lit) when the menu closes.
   - Flow: user knob short click opens the Working menu, measuring-encoder short click opens Calibration; in both, a user-knob short click goes to the next tab.
   - Adding a menu: subclass `MenuTab` per page (tabs draw on `display` themselves), `addTab()` them in order to a `Menu`, and `menus.addMenu(trigger, menu)` in `main()`. A new trigger source needs a `MenuTrigger` value, a `MenuInput` field, a case in `isTriggered()` (`menu_manager.cpp`), and filling that field in the main loop.
+
+- Settings: `settings.{h,cpp}` (`Settings`, a minimal flat-JSON parse/format, host-tested). `settings_store.{h,cpp}` keeps the JSON text in the last 4 KB flash sector (`loadSettings()` / `saveSettings()`). The defaults live in `Code/settings.json`, which CMake compiles in as the generated `build/generated/settings_default.h`. A new key needs a field in `Settings`, a line in `parseSettingsJson()` / `formatSettingsJson()`, and an entry in `settings.json`. `saveSettings()` turns interrupts off for about 50 ms typically (up to a few hundred ms worst case) (encoder steps are lost meanwhile), so never call it while wire is being measured.
+- Calibration (`calibration.{h,cpp}` = pure maths, `calibration_menu.{h,cpp}` = pages): length (the `KnobAccel` step is 1/10/100 mm depending on turning speed) → mode `Auto`/`HAnd` → `tIE End` (motor mode only, counting starts) → move (shows mm by the old ratio, `--------` past 8 digits) → result (shows |ticks|, saves `mm_per_tick = length / |ticks|`). The 7-segment font has no `M`/`X`, which is why the texts look the way they do.
 
 Current display wiring (SPI0): SCK=GP18, MOSI/DIN=GP19, CS/LOAD=GP17.
 Encoders (KY-040, powered from 3.3 V): measuring roll CLK=GP2, DT=GP3, SW=GP4; user knob CLK=GP6, DT=GP7, SW=GP8.
