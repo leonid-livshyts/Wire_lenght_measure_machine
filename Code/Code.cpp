@@ -6,6 +6,8 @@
 #include "click_detector.h"
 #include "menu.h"
 #include "menu_manager.h"
+#include "settings_store.h"
+#include "calibration_menu.h"
 
 // MAX7219 wiring (SPI0)
 constexpr uint DISPLAY_SCK_PIN  = 18;  // CLK
@@ -39,7 +41,7 @@ void showIdleScreen() {
 }
 
 // PLACEHOLDER tab: only shows a fixed label. It exists to check the menu
-// flow on the hardware; replace it with the real working / calibration tabs.
+// flow on the hardware; replace it with the real working tabs.
 class LabelTab final : public MenuTab {
 public:
     explicit LabelTab(const char *label) : label_(label) {}
@@ -51,11 +53,14 @@ private:
 
 LabelTab workTab1("run 1");
 LabelTab workTab2("run 2");
-LabelTab calTab1("CAL 1");
-LabelTab calTab2("CAL 2");
 
 Menu workingMenu;
-Menu calibrationMenu;
+
+Settings settings;  // loaded from flash in main(); the calibration menu updates it
+
+CalibrationContext calibration{display, motor, measureEncoder, settings, saveSettings};
+CalibrationMenu calibrationMenu(calibration);
+
 MenuManager menus(showIdleScreen);
 
 }  // namespace
@@ -64,14 +69,13 @@ int main()
 {
     motor.init();  // first: until then the driver sees a low pin = full speed
     stdio_init_all();
+    settings = loadSettings();  // settings.json defaults, overridden by the last calibration
     display.init(15);
     measureEncoder.init();
     userEncoder.init();
 
     workingMenu.addTab(workTab1);
     workingMenu.addTab(workTab2);
-    calibrationMenu.addTab(calTab1);
-    calibrationMenu.addTab(calTab2);
 
     // Working menu: user knob click. Calibration: measuring encoder click.
     // Tabs of both menus are advanced by a short click on the user knob.
