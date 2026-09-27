@@ -9,7 +9,8 @@
 Settings loadSettings();
 
 // Erases the settings sector and writes `settings` as JSON. Interrupts are
-// off for the erase (~50 ms): encoder steps and motor ramp steps are
-// missed meanwhile, so do not call it while wire is being measured.
+// off for the erase (~50 ms typically, up to a few hundred ms worst case):
+// encoder steps and motor ramp steps are missed meanwhile, so do not call
+// it while wire is being measured.
 // Returns false if the text did not fit or the flash could not be locked.
 bool saveSettings(const Settings &settings);

@@ -32,7 +32,7 @@ Settings loadSettings() {
 }
 
 bool saveSettings(const Settings &settings) {
-    static uint8_t page[FLASH_PAGE_SIZE];  // static: not on the stack while interrupts are off
+    static uint8_t page[FLASH_PAGE_SIZE];  // static: keeps the 256-byte page off the caller's stack
     memset(page, 0, sizeof(page));         // zero padding also terminates the text
     if (formatSettingsJson(settings, reinterpret_cast<char *>(page), sizeof(page)) < 0) return false;
     return flash_safe_execute(writeSettingsSector, page, kFlashLockTimeoutMs) == PICO_OK;
