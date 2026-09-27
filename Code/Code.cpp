@@ -8,6 +8,7 @@
 #include "menu_manager.h"
 #include "settings_store.h"
 #include "calibration_menu.h"
+#include "working_menu.h"
 
 // MAX7219 wiring (SPI0)
 constexpr uint DISPLAY_SCK_PIN  = 18;  // CLK
@@ -41,23 +42,10 @@ void showIdleScreen() {
     for (int pos = 0; pos < Max7219::kDigits; pos++) display.setSegments(pos, 0xFF);
 }
 
-// PLACEHOLDER tab: only shows a fixed label. It exists to check the menu
-// flow on the hardware; replace it with the real working tabs.
-class LabelTab final : public MenuTab {
-public:
-    explicit LabelTab(const char *label) : label_(label) {}
-    void onEnter() override { display.printText(label_); }
-
-private:
-    const char *label_;
-};
-
-LabelTab workTab1("run 1");
-LabelTab workTab2("run 2");
-
-Menu workingMenu;
-
 Settings settings;  // loaded from flash in main(); the calibration menu updates it
+
+WorkingContext working{display, motor, measureEncoder, settings};
+WorkingMenu workingMenu(working);
 
 CalibrationContext calibration{display, motor, measureEncoder, settings, saveSettings};
 CalibrationMenu calibrationMenu(calibration);
@@ -74,9 +62,6 @@ int main()
     display.init(15);
     measureEncoder.init();
     userEncoder.init();
-
-    workingMenu.addTab(workTab1);
-    workingMenu.addTab(workTab2);
 
     // Working menu: user knob click. Calibration: measuring encoder click.
     // Tabs of both menus are advanced by a short click on the user knob.

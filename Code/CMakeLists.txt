@@ -37,7 +37,7 @@ pico_sdk_init()
 
 add_executable(Code Code.cpp max7219.cpp rotary_encoder.cpp motor.cpp
         click_detector.cpp menu.cpp menu_manager.cpp knob_accel.cpp settings.cpp calibration.cpp settings_store.cpp calibration_menu.cpp
-        number_edit_tab.cpp)
+        number_edit_tab.cpp run_logic.cpp working_menu.cpp)
 
 # settings.json is compiled in as the default settings (settings_default.h).
 # Editing it re-runs CMake; the header is rewritten only when the text changed.
