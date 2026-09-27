@@ -34,6 +34,8 @@ void testTicksToMm() {
     CHECK(ticksToMm(3, 0.5) == 2);  // 1.5 rounds away from zero
     CHECK(ticksToMm(0, 1.0) == 0);
     CHECK(ticksToMm(INT32_MAX, 1000.0) == kMaxDisplayValue + 1);  // capped
+    CHECK(ticksToMm(1, 99999999.3) == kMaxDisplayValue);        // rounds down: still fits
+    CHECK(ticksToMm(1, 99999999.5) == kMaxDisplayValue + 1);    // rounds up: too large
 }
 
 void testFitsDisplay() {
