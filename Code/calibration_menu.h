@@ -3,8 +3,8 @@
 #include <stdint.h>
 
 #include "calibration.h"
-#include "knob_accel.h"
 #include "menu.h"
+#include "number_edit_tab.h"
 #include "settings.h"
 
 class Max7219;
@@ -27,21 +27,6 @@ struct CalibrationContext {
     int32_t length_mm = kDefaultCalLengthMm;  // kept between calibrations
     CalibrationMode mode = CalibrationMode::Motor;
     int32_t ticks = 0;  // |count| when the move page was left
-};
-
-// Page 1: length of the test wire in mm, speed-dependent knob step.
-class CalLengthTab final : public MenuTab {
-public:
-    explicit CalLengthTab(CalibrationContext &ctx) : ctx_(ctx) {}
-    void onEnter() override;
-    void onTurn(int32_t detents) override;
-    TabAction update(uint32_t now_ms) override;
-
-private:
-    void draw();
-    CalibrationContext &ctx_;
-    KnobAccel accel_;
-    uint32_t now_ms_ = 0;  // time of the latest pass, for KnobAccel
 };
 
 // Page 2: by motor ("Auto") or by hand ("HAnd"); each detent toggles.
@@ -109,7 +94,7 @@ protected:
 
 private:
     CalibrationContext &ctx_;
-    CalLengthTab length_;
+    NumberEditTab length_;  // page 1: length of the test wire in mm
     CalModeTab mode_;
     CalAttachTab attach_;
     CalMoveTab move_;

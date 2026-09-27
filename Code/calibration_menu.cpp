@@ -4,29 +4,6 @@
 #include "motor.h"
 #include "rotary_encoder.h"
 
-// --- Page 1: length ---
-
-void CalLengthTab::onEnter() {
-    accel_.reset();
-    draw();
-}
-
-void CalLengthTab::onTurn(int32_t detents) {
-    // now_ms_ is from the previous pass (<= one loop period old): turns are
-    // delivered before update() within a pass
-    ctx_.length_mm = adjustLength(ctx_.length_mm, accel_.scale(detents, now_ms_));
-    draw();
-}
-
-TabAction CalLengthTab::update(uint32_t now_ms) {
-    now_ms_ = now_ms;
-    return TabAction::Stay;
-}
-
-void CalLengthTab::draw() {
-    ctx_.display.printNumber(ctx_.length_mm);
-}
-
 // --- Page 2: mode ---
 
 void CalModeTab::onEnter() {
@@ -130,7 +107,9 @@ TabAction CalResultTab::onClick() {
 // --- Menu ---
 
 CalibrationMenu::CalibrationMenu(CalibrationContext &ctx)
-    : ctx_(ctx), length_(ctx), mode_(ctx), attach_(ctx), move_(ctx), result_(ctx) {
+    : ctx_(ctx),
+      length_(ctx.display, ctx.length_mm, kMinCalLengthMm, kMaxCalLengthMm, 100),
+      mode_(ctx), attach_(ctx), move_(ctx), result_(ctx) {
     addTab(length_);
     addTab(mode_);
     addTab(attach_);
