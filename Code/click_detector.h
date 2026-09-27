@@ -2,21 +2,28 @@
 
 #include <stdint.h>
 
-// Turns a debounced button level into "short click" events.
+// What one press of a button turned out to be, reported on release.
+enum class ClickEvent : uint8_t {
+    None,   // no release in this pass
+    Short,  // held for at most max_short_ms: flips menu pages
+    Long,   // held longer: e.g. pause/resume while pulling wire
+};
+
+// Turns a debounced button level into short and long clicks.
 //
-// A click is reported once, on release, and only if the button was held for
-// at most max_short_ms. Longer presses are ignored, so leaning on the knob
-// does not flip menu pages. Pure logic (no SDK calls), so it is unit-tested
-// on the host; the caller passes the time in.
+// Both are reported once, on release, so nothing happens while the button
+// is held. Pure logic (no SDK calls), so it is unit-tested on the host; the
+// caller passes the time in.
 class ClickDetector {
 public:
     static constexpr uint32_t kShortClickMaxMs = 2000;
 
     explicit ClickDetector(uint32_t max_short_ms = kShortClickMaxMs);
 
-    // Call regularly with the current button state and time. Returns true
-    // exactly once per short click. now_ms may wrap around.
-    bool update(bool pressed, uint32_t now_ms);
+    // Call regularly with the current button state and time. Returns Short
+    // or Long exactly once per press (on release), None otherwise.
+    // now_ms may wrap around.
+    ClickEvent update(bool pressed, uint32_t now_ms);
 
 private:
     uint32_t max_short_ms_;
