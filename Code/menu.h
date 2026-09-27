@@ -31,6 +31,10 @@ public:
     // The tab is about to be hidden (next tab or menu closing).
     virtual void onExit() {}
 
+    // Return true to leave this tab out of the sequence. Asked every time
+    // the menu moves to it, so it can depend on an earlier tab's choice.
+    virtual bool isSkipped() const { return false; }
+
 protected:
     // Tabs are never deleted through a MenuTab pointer (no heap).
     ~MenuTab() = default;
@@ -78,6 +82,9 @@ private:
 
     // Finishes closing the menu: clears current_ and fires onClose().
     void finishClose();
+
+    // Index of the first tab at or after `index` that is not skipped, -1 if none.
+    int firstShownFrom(int index) const;
 
     MenuTab *tabs_[kMaxTabs] = {};
     int tab_count_ = 0;

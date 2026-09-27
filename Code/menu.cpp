@@ -13,11 +13,12 @@ int Menu::tabCount() const {
 void Menu::open() {
     if (isOpen()) return;
     onOpen();
-    if (tab_count_ == 0) {  // nothing to show: open and close right away
+    int first = firstShownFrom(0);
+    if (first < 0) {  // nothing to show: open and close right away
         onClose();
         return;
     }
-    current_ = 0;
+    current_ = first;
     tabs_[current_]->onEnter();
 }
 
@@ -31,6 +32,13 @@ void Menu::finishClose() {
     close_requested_ = false;
     current_ = -1;
     onClose();
+}
+
+int Menu::firstShownFrom(int index) const {
+    for (int i = index; i < tab_count_; i++) {
+        if (!tabs_[i]->isSkipped()) return i;
+    }
+    return -1;
 }
 
 void Menu::close() {
@@ -68,19 +76,18 @@ void Menu::apply(TabAction action) {
     switch (action) {
         case TabAction::Stay:
             break;
-        case TabAction::Next:
-            if (current_ + 1 >= tab_count_) {
-                close();
-                break;
-            }
+        case TabAction::Next: {
             leaveCurrent();
-            if (close_requested_) {
+            // Asked after onExit(), so the leaving tab's choice is already stored
+            int next = firstShownFrom(current_ + 1);
+            if (close_requested_ || next < 0) {  // past the last shown tab, or closed from onExit()
                 finishClose();
                 break;
             }
-            current_++;
+            current_ = next;
             tabs_[current_]->onEnter();
             break;
+        }
         case TabAction::CloseMenu:
             close();
             break;

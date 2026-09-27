@@ -200,6 +200,72 @@ void testCloseFromOnExitDuringClose() {
     CHECK(m.closes == 1);
 }
 
+void testSkippedTabIsPassedOver() {
+    FakeTab a, b, c;
+    b.skipped = true;
+    Menu m;
+    m.addTab(a);
+    m.addTab(b);
+    m.addTab(c);
+    m.open();
+    m.click();
+    CHECK(m.currentTab() == 2);
+    CHECK(b.enters == 0);
+    CHECK(b.exits == 0);
+    CHECK(c.enters == 1);
+}
+
+void testSkipIsDecidedAtTransition() {
+    FakeTab a, b, c;
+    Menu m;
+    m.addTab(a);
+    m.addTab(b);
+    m.addTab(c);
+    m.open();
+    b.skipped = true;  // e.g. a choice made on tab a
+    m.click();
+    CHECK(m.currentTab() == 2);
+    CHECK(b.enters == 0);
+}
+
+void testSkippedLastTabCloses() {
+    FakeTab a, b;
+    b.skipped = true;
+    HookMenu m;
+    m.addTab(a);
+    m.addTab(b);
+    m.open();
+    m.click();
+    CHECK(!m.isOpen());
+    CHECK(a.exits == 1);
+    CHECK(b.enters == 0);
+    CHECK(m.closes == 1);
+}
+
+void testSkippedFirstTab() {
+    FakeTab a, b;
+    a.skipped = true;
+    Menu m;
+    m.addTab(a);
+    m.addTab(b);
+    m.open();
+    CHECK(m.currentTab() == 1);
+    CHECK(a.enters == 0);
+    CHECK(b.enters == 1);
+}
+
+void testAllTabsSkippedClosesImmediately() {
+    FakeTab a;
+    a.skipped = true;
+    HookMenu m;
+    m.addTab(a);
+    m.open();
+    CHECK(!m.isOpen());
+    CHECK(a.enters == 0);
+    CHECK(m.opens == 1);
+    CHECK(m.closes == 1);
+}
+
 }  // namespace
 
 void runMenuTests() {
@@ -217,4 +283,9 @@ void runMenuTests() {
     testEmptyMenuClosesImmediately();
     testCloseFromOnExitDuringNext();
     testCloseFromOnExitDuringClose();
+    testSkippedTabIsPassedOver();
+    testSkipIsDecidedAtTransition();
+    testSkippedLastTabCloses();
+    testSkippedFirstTab();
+    testAllTabsSkippedClosesImmediately();
 }
