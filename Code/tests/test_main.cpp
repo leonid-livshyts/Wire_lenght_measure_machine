@@ -5,11 +5,13 @@
 void runClickDetectorTests();
 void runMenuTests();
 void runMenuManagerTests();
+void runKnobAccelTests();
 
 int main() {
     runClickDetectorTests();
     runMenuTests();
     runMenuManagerTests();
+    runKnobAccelTests();
 
     if (g_failures != 0) {
         std::printf("%d check(s) failed\n", g_failures);
