@@ -43,6 +43,7 @@ void MenuManager::process(const MenuInput &input, uint32_t now_ms) {
         // the measuring-encoder click) are dropped, so menus never overlap.
         active_->turn(input.user_turn);
         if (input.user_click) active_->click();
+        if (input.user_long_click) active_->longClick();
     }
 
     if (active_ != nullptr && active_->isOpen()) active_->update(now_ms);

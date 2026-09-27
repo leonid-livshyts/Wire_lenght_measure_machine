@@ -12,9 +12,10 @@ enum class MenuTrigger : uint8_t {
 
 // Input gathered by the main loop for one pass.
 struct MenuInput {
-    int32_t user_turn = 0;       // user knob detents since the last pass
-    bool user_click = false;     // short click on the user knob
-    bool measure_click = false;  // short click on the measuring-roll encoder
+    int32_t user_turn = 0;         // user knob detents since the last pass
+    bool user_click = false;       // short click on the user knob
+    bool user_long_click = false;  // long click on the user knob; never opens a menu
+    bool measure_click = false;    // short click on the measuring-roll encoder
 };
 
 // Owns the "which menu is on screen" decision:

@@ -13,11 +13,14 @@ public:
     TabAction update_action = TabAction::Stay;
     Menu *close_on_exit = nullptr;  // re-entrancy: close the menu from inside onExit()
     bool skipped = false;  // isSkipped() result
+    int long_clicks = 0;
+    TabAction long_click_action = TabAction::Stay;
 
     void onEnter() override { enters++; }
     bool isSkipped() const override { return skipped; }
     void onTurn(int32_t detents) override { turned += detents; }
     TabAction onClick() override { clicks++; return click_action; }
+    TabAction onLongClick() override { long_clicks++; return long_click_action; }
     TabAction update(uint32_t) override { return update_action; }
     void onExit() override {
         exits++;

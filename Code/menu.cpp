@@ -67,6 +67,10 @@ void Menu::click() {
     if (isOpen()) apply(tabs_[current_]->onClick());
 }
 
+void Menu::longClick() {
+    if (isOpen()) apply(tabs_[current_]->onLongClick());
+}
+
 void Menu::update(uint32_t now_ms) {
     if (isOpen()) apply(tabs_[current_]->update(now_ms));
 }

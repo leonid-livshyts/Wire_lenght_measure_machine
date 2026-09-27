@@ -266,6 +266,32 @@ void testAllTabsSkippedClosesImmediately() {
     CHECK(m.closes == 1);
 }
 
+void testLongClickGoesToShownTab() {
+    FakeTab a, b;
+    Menu m;
+    m.addTab(a);
+    m.addTab(b);
+    m.open();
+    m.longClick();
+    CHECK(a.long_clicks == 1);
+    CHECK(a.clicks == 0);
+    CHECK(m.currentTab() == 0);  // default: Stay
+
+    a.long_click_action = TabAction::Next;
+    m.longClick();
+    CHECK(m.currentTab() == 1);
+    CHECK(b.long_clicks == 0);
+}
+
+void testLongClickWhileClosedIsIgnored() {
+    FakeTab a;
+    Menu m;
+    m.addTab(a);
+    m.longClick();
+    CHECK(a.long_clicks == 0);
+    CHECK(!m.isOpen());
+}
+
 }  // namespace
 
 void runMenuTests() {
@@ -288,4 +314,6 @@ void runMenuTests() {
     testSkippedLastTabCloses();
     testSkippedFirstTab();
     testAllTabsSkippedClosesImmediately();
+    testLongClickGoesToShownTab();
+    testLongClickWhileClosedIsIgnored();
 }

@@ -23,6 +23,10 @@ public:
     // Short click on the user encoder. Default: go to the next tab.
     virtual TabAction onClick() { return TabAction::Next; }
 
+    // Long click on the user encoder (held > 2 s, reported on release).
+    // Default: ignored.
+    virtual TabAction onLongClick() { return TabAction::Stay; }
+
     // Called every main-loop pass while the tab is shown, for tabs that
     // react to something other than the knob (e.g. wire length reached).
     // Also runs on the pass that opens the menu, right after onEnter().
@@ -67,6 +71,7 @@ public:
     // Input for the shown tab; ignored while closed.
     void turn(int32_t detents);
     void click();
+    void longClick();
     void update(uint32_t now_ms);
 
 protected:

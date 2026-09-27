@@ -11,6 +11,7 @@ void countIdle() { g_idle_shown++; }
 MenuInput userClick() { MenuInput in; in.user_click = true; return in; }
 MenuInput measureClick() { MenuInput in; in.measure_click = true; return in; }
 MenuInput userTurn(int32_t detents) { MenuInput in; in.user_turn = detents; return in; }
+MenuInput userLongClick() { MenuInput in; in.user_long_click = true; return in; }
 const MenuInput kNoInput{};
 
 // Same setup as the firmware: the working menu opens on a user encoder
@@ -147,6 +148,23 @@ void testSimultaneousClicksOpenFirstRegisteredMenu() {
     CHECK(f.cal1.enters == 0);
 }
 
+void testLongClickDoesNotOpenMenu() {
+    Fixture f;
+    f.manager.process(userLongClick(), 0);
+    CHECK(f.manager.activeMenu() == nullptr);
+    CHECK(f.work1.enters == 0);
+    CHECK(f.cal1.enters == 0);
+}
+
+void testLongClickReachesOpenTab() {
+    Fixture f;
+    f.manager.process(userClick(), 0);
+    f.manager.process(userLongClick(), 5);
+    CHECK(f.work1.long_clicks == 1);
+    CHECK(f.work1.clicks == 0);
+    CHECK(f.manager.activeMenu() == &f.working);
+}
+
 }  // namespace
 
 void runMenuManagerTests() {
@@ -163,4 +181,6 @@ void runMenuManagerTests() {
     testMenuClosedFromOutsideReturnsToIdle();
     testTriggerCanBeBoundOnlyOnce();
     testSimultaneousClicksOpenFirstRegisteredMenu();
+    testLongClickDoesNotOpenMenu();
+    testLongClickReachesOpenTab();
 }
