@@ -16,6 +16,14 @@ int64_t pulledMm(const WorkingContext &ctx, int32_t count) {
     return ticksToMm(count, ctx.settings.mm_per_tick);
 }
 
+// Unrounded pulled length, for control. ticksToMm() rounds to whole mm,
+// which makes the creep speed reading coarse and the stop fire early; this
+// is the exact value the maths in run_logic.h is written for.
+double exactMm(const WorkingContext &ctx, int32_t count) {
+    int64_t magnitude = count < 0 ? -(int64_t)count : (int64_t)count;  // int64: safe for INT32_MIN
+    return (double)magnitude * ctx.settings.mm_per_tick;
+}
+
 void showPulledMm(Max7219 &display, int64_t mm) {
     if (fitsDisplay(mm)) {
         display.printNumber((int32_t)mm);
@@ -54,29 +62,29 @@ void RunPullTab::onEnter() {
 
 TabAction RunPullTab::update(uint32_t now_ms) {
     int32_t count = ctx_.measure.getCount();
-    int64_t mm = pulledMm(ctx_, count);
+    int64_t mm = pulledMm(ctx_, count);         // rounded, for display only
+    double exact_mm = exactMm(ctx_, count);     // unrounded, for control
 
     if (start_pending_) {
         start_pending_ = false;
-        resume(count, mm, now_ms);
+        resume(count, exact_mm, now_ms);
     }
 
     if (isDriving()) {
-        double speed = speed_.update(mm, now_ms);
-        if (shouldStop(mm, ctx_.target_mm)) {
-            if (state_ == State::Running) {
-                ctx_.motor.stop();  // overshot at full speed: brake gently
-            } else {
-                ctx_.motor.setSpeed(0.0f, 0);  // creeping: stop at once, the wire coasts ~1 mm
-            }
-            printf("stop: %lld mm pulled, target %ld mm\n", (long long)mm, (long)ctx_.target_mm);
-            state_ = State::Stopped;
+        double speed = speed_.update(exact_mm, now_ms);
+        if (shouldStop(exact_mm, ctx_.target_mm)) {
+            stopAtTarget(exact_mm);
         } else if (stall_.update(count, now_ms)) {
             ctx_.motor.stop();
             state_ = State::Stalled;
         } else {
-            steer(speed, mm, now_ms);
+            steer(speed, exact_mm, now_ms);
         }
+    } else if (ctx_.motor.isRunning() && shouldStop(exact_mm, ctx_.target_mm)) {
+        // Paused or Stalled: not a driving state, so the branch above is
+        // skipped, but the motor may still be coasting down from stop()'s
+        // ramp and can coast past the target unless it is checked here too.
+        stopAtTarget(exact_mm);
     }
 
     draw(mm, now_ms);
@@ -84,10 +92,21 @@ TabAction RunPullTab::update(uint32_t now_ms) {
     return TabAction::Stay;
 }
 
-void RunPullTab::steer(double speed_mm_per_s, int64_t mm, uint32_t now_ms) {
+void RunPullTab::stopAtTarget(double mm) {
+    // Duty 0 coasts this low-side driver, so an instant cut is the shortest
+    // stop; a ramp (as stop() uses) would keep the motor driving further
+    // past the target. Used for every target stop: driving, paused or stalled.
+    ctx_.motor.setSpeed(0.0f, 0);
+    printf("stop: %.1f mm pulled, target %ld mm\n", mm, (long)ctx_.target_mm);
+    state_ = State::Stopped;
+}
+
+void RunPullTab::steer(double speed_mm_per_s, double mm, uint32_t now_ms) {
     switch (state_) {
         case State::Running:
-            // Motor::kDefaultRampMs: Code.cpp builds the motor with the default ramp
+            // The slow-down ramp is passed explicitly to both shouldSlowDown
+            // and setSpeed below (Motor::kDefaultRampMs), so the predicted
+            // slow-down distance matches the ramp actually driven.
             if (shouldSlowDown(mm, ctx_.target_mm, speed_mm_per_s, Motor::kDefaultRampMs)) {
                 creep_.start(estimateCreepPower(ctx_.motor.getSpeed(), speed_mm_per_s), maxPower(), now_ms);
                 driven_power_ = creep_.power();
@@ -124,7 +143,7 @@ TabAction RunPullTab::onLongClick() {
     } else {
         // now_ms_ is from the previous pass (<= one loop period old)
         int32_t count = ctx_.measure.getCount();
-        resume(count, pulledMm(ctx_, count), now_ms_);
+        resume(count, exactMm(ctx_, count), now_ms_);
     }
     return TabAction::Stay;
 }
@@ -149,7 +168,7 @@ void RunPullTab::creepAt(float power) {
     ctx_.motor.setSpeed(power, kCreepRampMs);
 }
 
-void RunPullTab::resume(int32_t count, int64_t mm, uint32_t now_ms) {
+void RunPullTab::resume(int32_t count, double mm, uint32_t now_ms) {
     if (shouldStop(mm, ctx_.target_mm)) {  // nothing left to pull
         state_ = State::Stopped;
         return;

@@ -60,11 +60,14 @@ private:
     float maxPower() const;  // the user's max speed as motor power
     // The driving state's own step: start slowing down, finish slowing
     // down, or correct the creep power
-    void steer(double speed_mm_per_s, int64_t mm, uint32_t now_ms);
+    void steer(double speed_mm_per_s, double mm, uint32_t now_ms);
     void creepAt(float power);
     // Starts the motor (or creeps, if close) unless the target is reached.
-    void resume(int32_t count, int64_t mm, uint32_t now_ms);
+    void resume(int32_t count, double mm, uint32_t now_ms);
     void draw(int64_t mm, uint32_t now_ms);
+    // Cuts power at once and marks the target reached; shared by every stop
+    // path (driving, paused or stalled).
+    void stopAtTarget(double mm);
 
     WorkingContext &ctx_;
     State state_ = State::Stopped;
