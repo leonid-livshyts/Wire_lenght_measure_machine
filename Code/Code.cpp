@@ -16,9 +16,9 @@ constexpr uint DISPLAY_MOSI_PIN = 19;  // DIN
 constexpr uint DISPLAY_CS_PIN   = 17;  // CS / LOAD
 
 // KY-040 encoders (powered from 3.3 V)
-constexpr uint MEASURE_ENC_CLK_PIN = 2;  // encoder geared to the measuring roll
-constexpr uint MEASURE_ENC_DT_PIN  = 3;
-constexpr uint MEASURE_ENC_SW_PIN  = 4;
+constexpr uint MEASURE_ENC_CLK_PIN = 24;  // encoder geared to the measuring roll
+constexpr uint MEASURE_ENC_DT_PIN  = 23;
+constexpr uint MEASURE_ENC_SW_PIN  = 21;
 constexpr uint USER_ENC_CLK_PIN    = 6;  // encoder for setting length / calibration
 constexpr uint USER_ENC_DT_PIN     = 7;
 constexpr uint USER_ENC_SW_PIN     = 8;

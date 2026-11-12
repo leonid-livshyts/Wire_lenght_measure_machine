@@ -5,6 +5,202 @@
 	(uuid "5d8af4b2-e70c-41af-b890-285b7e94d531")
 	(paper "A4")
 	(lib_symbols
+		(symbol "Connector:Barrel_Jack"
+			(pin_names
+				(offset 1.016)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 0 5.334 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Barrel_Jack"
+				(at 0 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 1.27 -1.016 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 1.27 -1.016 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "DC Barrel Jack"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "DC power barrel jack connector"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "BarrelJack*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Barrel_Jack_0_1"
+				(rectangle
+					(start -5.08 3.81)
+					(end 5.08 -3.81)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy -3.81 -2.54) (xy -2.54 -2.54) (xy -1.27 -1.27) (xy 0 -2.54) (xy 2.54 -2.54) (xy 5.08 -2.54)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -3.302 1.905)
+					(mid -3.9343 2.54)
+					(end -3.302 3.175)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -3.302 1.905)
+					(mid -3.9343 2.54)
+					(end -3.302 3.175)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 3.683 3.175)
+					(end -3.302 1.905)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 5.08 2.54) (xy 3.81 2.54)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Barrel_Jack_1_1"
+				(pin passive line
+					(at 7.62 2.54 180)
+					(length 2.54)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 -2.54 180)
+					(length 2.54)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Connector:Conn_01x02_Socket"
 			(pin_names
 				(offset 1.016)
@@ -3362,10 +3558,22 @@
 		(uuid "cfb44171-78a7-4085-9305-d67a0efbbfd0")
 	)
 	(junction
+		(at 63.5 63.5)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e112d192-03cc-42dc-8f7e-581fe61eca23")
+	)
+	(junction
 		(at 127 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e3b4e9c4-b8c2-4ea9-b2af-2bdbfbbab05d")
+	)
+	(junction
+		(at 63.5 49.53)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "ef15dcae-404d-4eb2-88e9-0b13d06187b9")
 	)
 	(junction
 		(at 71.12 40.64)
@@ -3463,16 +3671,6 @@
 	)
 	(wire
 		(pts
-			(xy 162.56 142.24) (xy 109.22 142.24)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "07323a6a-858d-4ad3-9c58-3eeec910d11f")
-	)
-	(wire
-		(pts
 			(xy 93.98 82.55) (xy 107.95 82.55)
 		)
 		(stroke
@@ -3480,16 +3678,6 @@
 			(type default)
 		)
 		(uuid "0a31d8e3-f066-43c4-b93c-55fcf7e5d100")
-	)
-	(wire
-		(pts
-			(xy 111.76 125.73) (xy 111.76 132.08)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0a959dc8-c9d2-4fe9-9c35-dc1a0bf89538")
 	)
 	(wire
 		(pts
@@ -3563,16 +3751,6 @@
 	)
 	(wire
 		(pts
-			(xy 157.48 132.08) (xy 111.76 132.08)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1d84d972-82f2-43b4-8fc8-ae781e207869")
-	)
-	(wire
-		(pts
 			(xy 73.66 58.42) (xy 73.66 82.55)
 		)
 		(stroke
@@ -3590,6 +3768,16 @@
 			(type default)
 		)
 		(uuid "1fb69a7c-7a9a-40c1-8e0d-69a0e830d823")
+	)
+	(wire
+		(pts
+			(xy 63.5 63.5) (xy 63.5 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "20bdadcc-e834-4502-bb42-c690d917f917")
 	)
 	(wire
 		(pts
@@ -3640,6 +3828,16 @@
 			(type default)
 		)
 		(uuid "3a81b551-4fd3-49b9-b1f6-3fb0884520b6")
+	)
+	(wire
+		(pts
+			(xy 45.72 54.61) (xy 45.72 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3a8a0045-8945-40b3-abb0-bb2586b225ee")
 	)
 	(wire
 		(pts
@@ -3723,6 +3921,16 @@
 	)
 	(wire
 		(pts
+			(xy 96.52 132.08) (xy 157.48 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5bb3820e-f938-4bdb-a91e-69bb8c5ee97f")
+	)
+	(wire
+		(pts
 			(xy 73.66 82.55) (xy 93.98 82.55)
 		)
 		(stroke
@@ -3740,6 +3948,16 @@
 			(type default)
 		)
 		(uuid "5d09fd1c-a11d-4fb2-963d-4c4ab097a49f")
+	)
+	(wire
+		(pts
+			(xy 45.72 63.5) (xy 63.5 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5d9dde41-6592-4194-b18a-26c8f444941b")
 	)
 	(wire
 		(pts
@@ -3813,13 +4031,23 @@
 	)
 	(wire
 		(pts
-			(xy 63.5 58.42) (xy 63.5 95.25)
+			(xy 63.5 58.42) (xy 63.5 63.5)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "70fb0d33-b9f1-4b01-94fd-7b208778d56a")
+	)
+	(wire
+		(pts
+			(xy 45.72 49.53) (xy 63.5 49.53)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7106190e-31a8-433f-baa6-97a0a9b3aa1a")
 	)
 	(wire
 		(pts
@@ -3873,6 +4101,16 @@
 	)
 	(wire
 		(pts
+			(xy 137.16 142.24) (xy 137.16 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8b5e1b94-3778-4a0f-8779-1bf923e6b113")
+	)
+	(wire
+		(pts
 			(xy 179.07 109.22) (xy 162.56 109.22)
 		)
 		(stroke
@@ -3883,6 +4121,16 @@
 	)
 	(wire
 		(pts
+			(xy 99.06 139.7) (xy 99.06 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8dcce9ba-0e92-49e9-b3bd-cf4ca81af27f")
+	)
+	(wire
+		(pts
 			(xy 179.07 85.09) (xy 152.4 85.09)
 		)
 		(stroke
@@ -3890,6 +4138,16 @@
 			(type default)
 		)
 		(uuid "8ff2aaff-7ee7-4bd1-a298-6247cd723edc")
+	)
+	(wire
+		(pts
+			(xy 162.56 142.24) (xy 137.16 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "928a9a9a-6d76-4aee-8ced-d69148e548d2")
 	)
 	(wire
 		(pts
@@ -3910,16 +4168,6 @@
 			(type default)
 		)
 		(uuid "95cddc62-9c5a-4081-a04a-c8677e7c4212")
-	)
-	(wire
-		(pts
-			(xy 160.02 139.7) (xy 73.66 139.7)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "96417936-2936-44f6-9baa-6334668d25a3")
 	)
 	(wire
 		(pts
@@ -4103,13 +4351,13 @@
 	)
 	(wire
 		(pts
-			(xy 109.22 142.24) (xy 109.22 125.73)
+			(xy 63.5 49.53) (xy 63.5 50.8)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "b76fc161-4aa5-446a-901e-7e066f9ddbe2")
+		(uuid "b7e6ef37-9c04-4600-9a90-d5605fb94920")
 	)
 	(wire
 		(pts
@@ -4130,6 +4378,16 @@
 			(type default)
 		)
 		(uuid "b9a1d3dc-71ff-4619-b7f8-8c7f8f120d47")
+	)
+	(wire
+		(pts
+			(xy 160.02 139.7) (xy 99.06 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "be5cb2de-748a-4997-bb44-3e4cd375f9ff")
 	)
 	(wire
 		(pts
@@ -4193,7 +4451,7 @@
 	)
 	(wire
 		(pts
-			(xy 57.15 137.16) (xy 57.15 60.96)
+			(xy 57.15 60.96) (xy 57.15 137.16)
 		)
 		(stroke
 			(width 0)
@@ -4220,16 +4478,6 @@
 			(type default)
 		)
 		(uuid "d2de6c0b-e0d3-4721-8281-a0d30231fede")
-	)
-	(wire
-		(pts
-			(xy 73.66 139.7) (xy 73.66 125.73)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d391f727-a7b0-4e93-bbe6-f196e985291c")
 	)
 	(wire
 		(pts
@@ -4383,7 +4631,7 @@
 	)
 	(wire
 		(pts
-			(xy 63.5 40.64) (xy 63.5 50.8)
+			(xy 63.5 40.64) (xy 63.5 49.53)
 		)
 		(stroke
 			(width 0)
@@ -4403,6 +4651,16 @@
 	)
 	(wire
 		(pts
+			(xy 96.52 132.08) (xy 96.52 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fe742c0e-cc0f-4c04-a461-98805caac086")
+	)
+	(wire
+		(pts
 			(xy 179.07 106.68) (xy 160.02 106.68)
 		)
 		(stroke
@@ -4410,6 +4668,86 @@
 			(type default)
 		)
 		(uuid "ff146aa8-2c27-4fab-a768-5a883c02bc6b")
+	)
+	(symbol
+		(lib_id "Connector:Barrel_Jack")
+		(at 38.1 52.07 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0e4d6951-3197-4155-9787-93aa2627faab")
+		(property "Reference" "J6"
+			(at 38.1 43.18 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Barrel_Jack"
+			(at 38.1 45.72 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_BarrelJack:BarrelJack_SwitchcraftConxall_RAPC10U_Horizontal"
+			(at 39.37 53.086 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 39.37 53.086 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "DC Barrel Jack"
+			(at 38.1 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "52e65c45-f69b-4945-850e-358c1c7f086b")
+		)
+		(pin "2"
+			(uuid "12592903-45ce-4a5f-859a-c2835bd8c612")
+		)
+		(instances
+			(project "PCB, Schematic and Components"
+				(path "/5d8af4b2-e70c-41af-b890-285b7e94d531"
+					(reference "J6")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(symbol
 		(lib_id "Regulator_Linear:L7805")
@@ -4699,7 +5037,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DFN_QFN:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm"
+		(property "Footprint" "Library:WeAct2350B"
 			(at 73.66 110.49 0)
 			(hide yes)
 			(show_name no)
@@ -5769,7 +6107,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_AMASS:AMASS_XT30U-F_1x02_P5.0mm_Vertical"
+		(property "Footprint" "Connector_Hirose:Hirose_DF13-02P-1.25DSA_1x02_P1.25mm_Vertical"
 			(at 184.15 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -5922,6 +6260,86 @@
 			(project "PCB, Schematic and Components"
 				(path "/5d8af4b2-e70c-41af-b890-285b7e94d531"
 					(reference "Q2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x02_Socket")
+		(at 40.64 63.5 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b5e361ff-6975-4d55-b6ed-37f9b80fab29")
+		(property "Reference" "J7"
+			(at 41.275 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "switch"
+			(at 41.275 58.42 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_AMASS:AMASS_XT30U-F_1x02_P5.0mm_Vertical"
+			(at 40.64 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 40.64 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 40.64 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "9cb2db72-f4d2-4b57-876a-608f460e6ee0")
+		)
+		(pin "1"
+			(uuid "fab5ace6-0a73-41e1-9b95-940314420d57")
+		)
+		(instances
+			(project "PCB, Schematic and Components"
+				(path "/5d8af4b2-e70c-41af-b890-285b7e94d531"
+					(reference "J7")
 					(unit 1)
 				)
 			)
@@ -6292,7 +6710,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_Harwin:Harwin_M20-89005xx_1x05_P2.54mm_Horizontal"
+		(property "Footprint" "Connector_Hirose:Hirose_DF13-05P-1.25DSA_1x05_P1.25mm_Vertical"
 			(at 184.15 85.09 0)
 			(hide yes)
 			(show_name no)
