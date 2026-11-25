@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "buzzer.h"
 #include "max7219.h"
 #include "rotary_encoder.h"
 #include "motor.h"
@@ -26,6 +27,9 @@ constexpr uint USER_ENC_SW_PIN     = 8;
 // Motor driver input (BC547 -> IRF3205, inverting: high = stopped)
 constexpr uint MOTOR_PWM_PIN = 10;
 
+// Passive buzzer BZ1: + on the pin, - to GND (PWM slice 7 B)
+constexpr uint BUZZER_PIN = 15;
+
 constexpr uint32_t LOOP_PERIOD_MS = 5;
 constexpr uint32_t DISPLAY_REFRESH_MS = 250;  // heals a display corrupted by a noisy SPI frame
 
@@ -33,6 +37,7 @@ Max7219 display(spi0, DISPLAY_SCK_PIN, DISPLAY_MOSI_PIN, DISPLAY_CS_PIN);
 RotaryEncoder measureEncoder(MEASURE_ENC_CLK_PIN, MEASURE_ENC_DT_PIN, MEASURE_ENC_SW_PIN);
 RotaryEncoder userEncoder(USER_ENC_CLK_PIN, USER_ENC_DT_PIN, USER_ENC_SW_PIN);
 Motor motor(MOTOR_PWM_PIN);
+Buzzer buzzer(BUZZER_PIN);
 
 namespace {
 
@@ -44,10 +49,10 @@ void showIdleScreen() {
 
 Settings settings;  // loaded from flash in main(); the calibration menu updates it
 
-WorkingContext working{display, motor, measureEncoder, settings};
+WorkingContext working{display, motor, measureEncoder, settings, buzzer};
 WorkingMenu workingMenu(working);
 
-CalibrationContext calibration{display, motor, measureEncoder, settings, saveSettings};
+CalibrationContext calibration{display, motor, measureEncoder, settings, saveSettings, buzzer};
 CalibrationMenu calibrationMenu(calibration);
 
 MenuManager menus(showIdleScreen);
@@ -59,6 +64,7 @@ int main()
     motor.init();  // first: until then the driver sees a low pin = full speed
     stdio_init_all();
     settings = loadSettings();  // settings.json defaults, overridden by the last calibration
+    buzzer.init();
     display.init(15);
     measureEncoder.init();
     userEncoder.init();
@@ -81,10 +87,18 @@ int main()
         ClickEvent user_click = userClicks.update(userEncoder.isPressed(), now);
         input.user_click = user_click == ClickEvent::Short;
         input.user_long_click = user_click == ClickEvent::Long;
-        input.measure_click = measureClicks.update(measureEncoder.isPressed(), now) == ClickEvent::Short;
+        ClickEvent measure_click = measureClicks.update(measureEncoder.isPressed(), now);
+        input.measure_click = measure_click == ClickEvent::Short;
         // measureEncoder.readDelta() is deliberately not drained: the measuring roll uses getCount(),
         // so a later readDelta() would return everything since boot.
+
+        // Any touch of the user knob silences an error alarm. Done before
+        // process(), so an error raised by this very input still sounds.
+        if (input.user_turn != 0 || user_click != ClickEvent::None) buzzer.stopAlarm();
+        if (user_click != ClickEvent::None || measure_click != ClickEvent::None) buzzer.beep();
+
         menus.process(input, now);
+        buzzer.update(now);
 
         if (now - last_display_refresh >= DISPLAY_REFRESH_MS) {
             display.refresh();

@@ -1,5 +1,6 @@
 #include "calibration_menu.h"
 
+#include "buzzer.h"
 #include "max7219.h"
 #include "motor.h"
 #include "rotary_encoder.h"
@@ -78,6 +79,7 @@ void CalResultTab::onEnter() {
     double mm_per_tick = 0.0;
     if (!computeMmPerTick(ctx_.length_mm, ctx_.ticks, mm_per_tick)) {
         ctx_.display.printText("Err");  // no ticks counted: nothing to save
+        ctx_.buzzer.startAlarm();
         return;
     }
     ctx_.display.printNumber(ctx_.ticks);
@@ -91,7 +93,10 @@ TabAction CalResultTab::update(uint32_t) {
     // flash erase, which would freeze that braking ramp mid-stop.
     if (save_pending_ && !ctx_.motor.isRunning()) {
         ctx_.settings.mm_per_tick = new_mm_per_tick_;
-        if (!ctx_.save(ctx_.settings)) ctx_.display.printText("FLSH Err");
+        if (!ctx_.save(ctx_.settings)) {
+            ctx_.display.printText("FLSH Err");
+            ctx_.buzzer.startAlarm();
+        }
         save_pending_ = false;
     }
     return TabAction::Stay;

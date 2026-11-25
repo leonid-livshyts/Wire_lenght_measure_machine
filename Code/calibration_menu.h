@@ -7,6 +7,7 @@
 #include "number_edit_tab.h"
 #include "settings.h"
 
+class Buzzer;
 class Max7219;
 class Motor;
 class RotaryEncoder;
@@ -23,6 +24,7 @@ struct CalibrationContext {
     RotaryEncoder &measure;  // measuring-roll encoder
     Settings &settings;      // live settings; the new ratio is written here
     bool (*save)(const Settings &);
+    Buzzer &buzzer;          // alarm on Err / FLSH Err
 
     int32_t length_mm = kDefaultCalLengthMm;  // kept between calibrations
     CalibrationMode mode = CalibrationMode::Motor;

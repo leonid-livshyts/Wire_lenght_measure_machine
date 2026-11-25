@@ -9,6 +9,7 @@ void runKnobAccelTests();
 void runSettingsTests();
 void runCalibrationTests();
 void runRunLogicTests();
+void runSoundTests();
 
 int main() {
     runClickDetectorTests();
@@ -18,6 +19,7 @@ int main() {
     runSettingsTests();
     runCalibrationTests();
     runRunLogicTests();
+    runSoundTests();
 
     if (g_failures != 0) {
         std::printf("%d check(s) failed\n", g_failures);

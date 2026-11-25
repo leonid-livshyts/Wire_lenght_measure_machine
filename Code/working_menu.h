@@ -7,6 +7,7 @@
 #include "run_logic.h"
 #include "settings.h"
 
+class Buzzer;
 class Max7219;
 class Motor;
 class RotaryEncoder;
@@ -18,6 +19,7 @@ struct WorkingContext {
     Motor &motor;
     RotaryEncoder &measure;    // measuring-roll encoder
     const Settings &settings;  // mm_per_tick from the last calibration
+    Buzzer &buzzer;            // melody when the hank is done, alarm on a stall
 
     int32_t target_mm = kDefaultTargetMm;
     int32_t speed_percent = kDefaultSpeedPercent;

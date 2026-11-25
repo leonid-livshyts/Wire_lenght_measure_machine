@@ -816,6 +816,183 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Device:Buzzer"
+			(pin_names
+				(offset 0.0254)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "BZ"
+				(at 3.81 1.27 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "Buzzer"
+				(at 3.81 -1.27 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at -0.635 2.54 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at -0.635 2.54 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Buzzer, polarized"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "quartz resonator ceramic"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "*Buzzer*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Buzzer_0_1"
+				(polyline
+					(pts
+						(xy -1.651 1.905) (xy -1.143 1.905)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.397 2.159) (xy -1.397 1.651)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 0 3.175)
+					(mid 3.1612 0)
+					(end 0 -3.175)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 3.175) (xy 0 -3.175)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Buzzer_1_1"
+				(pin passive line
+					(at -2.54 2.54 0)
+					(length 2.54)
+					(name "+"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -2.54 -2.54 0)
+					(length 2.54)
+					(name "-"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Device:C"
 			(pin_numbers
 				(hide yes)
@@ -3450,6 +3627,12 @@
 		)
 	)
 	(junction
+		(at 166.37 80.01)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "165267c9-63c0-4768-854b-f28fdfd93c91")
+	)
+	(junction
 		(at 148.59 40.64)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3781,6 +3964,16 @@
 	)
 	(wire
 		(pts
+			(xy 88.9 144.78) (xy 179.07 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "24660765-61e0-4c3d-90c0-ac57a1faa9c8")
+	)
+	(wire
+		(pts
 			(xy 176.53 60.96) (xy 176.53 62.23)
 		)
 		(stroke
@@ -3811,6 +4004,16 @@
 	)
 	(wire
 		(pts
+			(xy 166.37 80.01) (xy 166.37 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "331249dd-56e5-4dc7-a699-9060ae2b35c4")
+	)
+	(wire
+		(pts
 			(xy 107.95 49.53) (xy 115.57 49.53)
 		)
 		(stroke
@@ -3821,7 +4024,7 @@
 	)
 	(wire
 		(pts
-			(xy 115.57 80.01) (xy 168.91 80.01)
+			(xy 115.57 80.01) (xy 166.37 80.01)
 		)
 		(stroke
 			(width 0)
@@ -3918,6 +4121,16 @@
 			(type default)
 		)
 		(uuid "5800b1ab-8d86-46e4-93ab-0411d53ecec9")
+	)
+	(wire
+		(pts
+			(xy 166.37 80.01) (xy 168.91 80.01)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5a507316-7cc3-4c66-bff5-8a388152b7c7")
 	)
 	(wire
 		(pts
@@ -4078,6 +4291,16 @@
 			(type default)
 		)
 		(uuid "7b3487f5-64a8-4131-be6e-864271346316")
+	)
+	(wire
+		(pts
+			(xy 179.07 138.43) (xy 179.07 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82a3539e-42d7-4378-8600-5e1dda7b35a9")
 	)
 	(wire
 		(pts
@@ -4561,6 +4784,16 @@
 	)
 	(wire
 		(pts
+			(xy 88.9 144.78) (xy 88.9 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e99ec534-bd0f-437e-8254-992e3395b6c3")
+	)
+	(wire
+		(pts
 			(xy 165.1 49.53) (xy 176.53 49.53)
 		)
 		(stroke
@@ -4588,6 +4821,16 @@
 			(type default)
 		)
 		(uuid "f4e77d94-8d5b-4e8a-98f9-2de4b59d5641")
+	)
+	(wire
+		(pts
+			(xy 166.37 133.35) (xy 179.07 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f513c8a0-e600-43b2-9b7b-fc9bcf41dd2e")
 	)
 	(wire
 		(pts
@@ -6068,6 +6311,88 @@
 			(project "PCB, Schematic and Components"
 				(path "/5d8af4b2-e70c-41af-b890-285b7e94d531"
 					(reference "#PWR04")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:Buzzer")
+		(at 181.61 135.89 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9e2a302f-ced2-4cf5-989a-bf7f66a3d4fe")
+		(property "Reference" "BZ1"
+			(at 185.42 134.6199 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Buzzer"
+			(at 185.42 137.1599 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Buzzer_Beeper:Buzzer_12x9.5RM7.6"
+			(at 180.975 133.35 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 180.975 133.35 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Buzzer, polarized"
+			(at 181.61 135.89 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "c32d6dfa-f266-425f-a9d8-c94b07acdd50")
+		)
+		(pin "2"
+			(uuid "f7e9e2e8-26cb-46e4-a865-27c8796ae168")
+		)
+		(instances
+			(project "PCB, Schematic and Components"
+				(path "/5d8af4b2-e70c-41af-b890-285b7e94d531"
+					(reference "BZ1")
 					(unit 1)
 				)
 			)

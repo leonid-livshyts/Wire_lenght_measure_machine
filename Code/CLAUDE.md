@@ -37,6 +37,8 @@ New `.cpp` files must be added to `add_executable(Code ...)`, and any new SDK ha
 
 - `motor.{h,cpp}` — `Motor`, PWM speed control for the pulling motor. The driver (BC547 → IRF3205) is inverting (pin high = stopped), handled by inverted PWM output polarity, so the API uses 0.0 = stopped … 1.0 = full. `start()` / `stop()` / `setMaxSpeed()` are non-blocking: a 5 ms repeating timer ramps the speed along an S-curve over `ramp_ms` (default 2.5 s). A new command always ramps from the current speed, so it never jumps. `motor.init()` must run first in `main()`, because a low pin means full speed. `setSpeed(speed, ramp_ms)` drives an exact power (not limited by the max speed) with its own ramp time, 0 = at once; `isRamping()` tells when a ramp has finished.
 
+- Sound: `sound.{h,cpp}` — `SoundSequencer` (hardware-free, host-tested) decides the tone for a given time: `beep()` (40 ms, plays over the others, which keep their timing), `startAlarm()` (250 ms on / 250 ms off until `stopAlarm()`, cancels the melody) and `playMelody()` (the 5 s finished-hank tune, `static_assert`ed to 5000 ms; each note ends with a 20 ms gap). `buzzer.{h,cpp}` — `Buzzer` plays it as 50 % PWM on GP15; `update()` runs every main-loop pass. Events: every user/measuring-encoder click (short or long, on release) beeps; `RunPullTab::stopAtTarget()` plays the melody; a stall, calibration `Err` and `FLSH Err` start the alarm; any user-knob turn or click stops it (the input still does its normal action). New errors: call `ctx.buzzer.startAlarm()`.
+
 - Menu system (hardware-free, host-tested, so no Pico headers in these files):
   - `click_detector.{h,cpp}` — `ClickDetector`: on release reports `ClickEvent::Short` (held ≤ 2 s, `kShortClickMaxMs`) or `ClickEvent::Long` (held longer); nothing while held. User-knob long clicks reach the shown tab via `MenuInput::user_long_click` → `MenuTab::onLongClick()` (default: ignored) and never open a menu.
   - `menu.{h,cpp}` — `MenuTab` (one page: `onEnter` / `onTurn` / `onClick` / `update` / `onExit`, returning `TabAction::Stay | Next | CloseMenu`) and `Menu` (ordered tabs; `Next` past the last tab closes the menu; override `onOpen()` / `onClose()` for menu-wide setup and cleanup).
@@ -52,5 +54,7 @@ New `.cpp` files must be added to `add_executable(Code ...)`, and any new SDK ha
 
 Current display wiring (SPI0): SCK=GP18, MOSI/DIN=GP19, CS/LOAD=GP17.
 Encoders (KY-040, powered from 3.3 V): measuring roll CLK=GP24, DT=GP23, SW=GP21; user knob CLK=GP6, DT=GP7, SW=GP8.
+Motor driver input (PWM): GP10.
+Buzzer BZ1 (passive): + = GP15 (PWM slice 7 B), − = GND.
 
 `.great_cto/` and `shared/` are tooling files from a Claude plugin, not firmware.

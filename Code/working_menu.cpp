@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "buzzer.h"
 #include "calibration.h"
 #include "max7219.h"
 #include "motor.h"
@@ -77,6 +78,7 @@ TabAction RunPullTab::update(uint32_t now_ms) {
         } else if (stall_.update(count, now_ms)) {
             ctx_.motor.stop();
             state_ = State::Stalled;
+            ctx_.buzzer.startAlarm();  // until the user touches the knob
         } else {
             steer(speed, exact_mm, now_ms);
         }
@@ -99,6 +101,7 @@ void RunPullTab::stopAtTarget(double mm) {
     ctx_.motor.setSpeed(0.0f, 0);
     printf("stop: %.1f mm pulled, target %ld mm\n", mm, (long)ctx_.target_mm);
     state_ = State::Stopped;
+    ctx_.buzzer.playMelody();  // the hank is done
 }
 
 void RunPullTab::steer(double speed_mm_per_s, double mm, uint32_t now_ms) {
